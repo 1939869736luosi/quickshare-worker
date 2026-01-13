@@ -143,9 +143,9 @@ export default function ImageShare() {
 
         <Upload {...props}>
           <div className="w-full">
-            <label className="flex h-48 w-full cursor-pointer appearance-none justify-center rounded-xl border-2 border-dashed border-blue-300/50 dark:border-blue-500/30 px-4 transition hover:border-blue-400/70 dark:hover:border-blue-400/50 focus:outline-none items-center bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20 hover:from-blue-100/60 hover:to-indigo-100/60 dark:hover:from-blue-900/30 dark:hover:to-indigo-900/30">
+            <label className="flex h-48 w-full cursor-pointer appearance-none justify-center rounded-xl border-2 border-dashed border-primary/30 dark:border-primary/30 px-4 transition hover:border-primary/50 dark:hover:border-primary/50 focus:outline-none items-center bg-gradient-to-br from-[#D67052]/10 to-[#F0B857]/10 dark:from-[#D67052]/10 dark:to-[#F0B857]/10 hover:from-[#D67052]/20 hover:to-[#F0B857]/20 dark:hover:from-[#D67052]/20 dark:hover:to-[#F0B857]/20">
               <span className="flex flex-col items-center space-y-3">
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#D67052] to-[#F0B857] rounded-2xl flex items-center justify-center shadow-lg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-8 w-8 text-white"
@@ -165,7 +165,7 @@ export default function ImageShare() {
                   <span className="font-semibold text-gray-900 dark:text-white text-lg block">
                     {t("fileShareTip")}
                   </span>
-                  <span className="text-blue-600 dark:text-blue-400 text-sm font-medium">
+                  <span className="text-primary dark:text-primary text-sm font-medium">
                     {t("viewFiles")}
                   </span>
                 </div>
