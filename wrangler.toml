@@ -11,10 +11,10 @@ BASE_URL = "https://quickshare-worker.k62kkni9h2bmvgclhtkjp.workers.dev"
 # pattern = "your-domain.com"
 # custom_domain = true
 
-# Optional: only needed if you re-enable file uploads.
-[[r2_buckets]]
-binding = "BUCKET"
-bucket_name = "pastes"
+# Optional: R2 bucket for file storage (not currently used - files load into editor)
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "pastes"
 
 [[d1_databases]]
 binding = "DB"
