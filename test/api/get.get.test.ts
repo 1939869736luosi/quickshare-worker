@@ -117,19 +117,17 @@ describe('get.get', () => {
   it('should handle private paste with correct password', async () => {
     const id = 'private-id';
     const password = 'secret-pass';
-    const metadata = {
-      language: 'text',
-      create_time: Date.now(),
-      share_password: password,
-    };
+    const createTime = Date.now();
 
     await testDb.insert(pastes).values({
       id,
       content: 'private content',
-      createTime: metadata.create_time,
-      metadata: JSON.stringify(metadata),
+      createTime,
+      metadata: JSON.stringify({ language: 'text', create_time: createTime }),
       language: 'text',
       expire: 0,
+      isProtected: 1,
+      sharePassword: password,
     });
 
     (getQuery as any).mockReturnValue({ id, share_password: password });
@@ -142,19 +140,17 @@ describe('get.get', () => {
   it('should reject private paste without password', async () => {
     const id = 'private-id-no-pass';
     const password = 'secret-pass';
-    const metadata = {
-      language: 'text',
-      create_time: Date.now(),
-      share_password: password,
-    };
+    const createTime = Date.now();
 
     await testDb.insert(pastes).values({
       id,
       content: 'private content',
-      createTime: metadata.create_time,
-      metadata: JSON.stringify(metadata),
+      createTime,
+      metadata: JSON.stringify({ language: 'text', create_time: createTime }),
       language: 'text',
       expire: 0,
+      isProtected: 1,
+      sharePassword: password,
     });
 
     (getQuery as any).mockReturnValue({ id });
@@ -172,19 +168,17 @@ describe('get.get', () => {
   it('should reject private paste with wrong password', async () => {
     const id = 'private-id-wrong-pass';
     const password = 'secret-pass';
-    const metadata = {
-      language: 'text',
-      create_time: Date.now(),
-      share_password: password,
-    };
+    const createTime = Date.now();
 
     await testDb.insert(pastes).values({
       id,
       content: 'private content',
-      createTime: metadata.create_time,
-      metadata: JSON.stringify(metadata),
+      createTime,
+      metadata: JSON.stringify({ language: 'text', create_time: createTime }),
       language: 'text',
       expire: 0,
+      isProtected: 1,
+      sharePassword: password,
     });
 
     (getQuery as any).mockReturnValue({ id, share_password: 'wrong' });

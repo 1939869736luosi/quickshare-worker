@@ -46,10 +46,10 @@ describe('raw/[id].get', () => {
       req: {
         runtime: {
           cloudflare: {
-             env: {
+            env: {
               DB: {},
               BASE_URL: 'http://localhost',
-             }
+            }
           }
         }
       }
@@ -59,7 +59,7 @@ describe('raw/[id].get', () => {
   it('should return raw content', async () => {
     const id = 'test-id';
     const content = 'test content';
-    
+
     await testDb.insert(pastes).values({
       id,
       content,
@@ -92,18 +92,20 @@ describe('raw/[id].get', () => {
     const id = 'test-id';
     const content = 'test content';
     const share_password = 'secret';
-    
+
     await testDb.insert(pastes).values({
       id,
       content,
       createTime: Date.now(),
-      metadata: JSON.stringify({ share_password }),
+      metadata: JSON.stringify({}),
       language: 'text',
       expire: 0,
+      isProtected: 1,
+      sharePassword: share_password,
     });
 
     (getRouterParam as any).mockReturnValue(id);
-    
+
     // No password provided
     (getQuery as any).mockReturnValue({});
     let event = createEvent();
