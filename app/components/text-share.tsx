@@ -156,22 +156,22 @@ export default function TextShare() {
             <label className="text-sm font-medium text-foreground h-5 flex items-center">
               {t("uploadFile")}
             </label>
+            <label
+              htmlFor="file-upload-input"
+              className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-md cursor-pointer bg-white/80 dark:bg-gray-900/80 border-dashed border-2 border-gray-300 hover:border-primary hover:bg-primary/5 transition-colors text-sm font-medium ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <FileUp className="w-4 h-4" />
+              {uploading ? t("uploading") : t("selectFile")}
+            </label>
             <input
+              id="file-upload-input"
               type="file"
               ref={fileInputRef}
               onChange={handleFileUpload}
               className="hidden"
               accept="*"
-            />
-            <Button
-              variant="outline"
-              onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="w-full bg-white/80 dark:bg-gray-900/80 border-dashed border-2 hover:border-primary hover:bg-primary/5"
-            >
-              <FileUp className="w-4 h-4 mr-2" />
-              {uploading ? t("uploading") : t("selectFile")}
-            </Button>
+            />
           </div>
 
           {/* 是否私有 */}
