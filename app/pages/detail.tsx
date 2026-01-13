@@ -191,7 +191,7 @@ export default function Detail() {
                   <span className="sm:hidden">{t("url")}</span>
                   <span className="hidden sm:inline">{t("copyPreviewUrl")}</span>
                 </CopyButton>
-                {pasteData?.is_protected && urlPassword && (
+                {!!pasteData?.is_protected && urlPassword && (
                   <CopyButton text={urlPassword} size="sm" variant="outline">
                     <span className="sm:hidden">{t("pwd")}</span>
                     <span className="hidden sm:inline">{t("pwd")}</span>
@@ -242,8 +242,8 @@ export default function Detail() {
               <button
                 onClick={() => setViewMode("preview")}
                 className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "preview"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
               >
                 <Eye className="h-3 w-3" />
@@ -252,8 +252,8 @@ export default function Detail() {
               <button
                 onClick={() => setViewMode("source")}
                 className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "source"
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
               >
                 <Code className="h-3 w-3" />
