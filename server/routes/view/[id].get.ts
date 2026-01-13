@@ -91,7 +91,7 @@ function renderPasswordPage(id: string, error?: string): string {
         padding: 10px 12px;
         border: 0;
         border-radius: 10px;
-        background: #2563eb;
+        background: #C45B3E;
         color: white;
         font-weight: 600;
         cursor: pointer;
