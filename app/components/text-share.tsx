@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, FileUp, X } from "lucide-react";
+import { FileUp } from "lucide-react";
 import qs from "qs";
 import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -17,10 +17,7 @@ import { useLocation } from "wouter";
 
 import { createPaste } from "../service";
 import { ShareStorage } from "../utils/share-storage";
-import CopyButton from "./copy-button";
 import Editor from "./editor";
-
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 
 export default function TextShare() {
   const { t } = useTranslation();
@@ -31,7 +28,6 @@ export default function TextShare() {
   const [isProtected, setIsProtected] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<{ url: string; name: string; size: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const createPB = async () => {
@@ -78,57 +74,53 @@ export default function TextShare() {
     setIsProtected(checked);
   };
 
+  // 根据文件扩展名和内容检测类型
+  const detectFileType = (fileName: string, content: string): string => {
+    const ext = fileName.split('.').pop()?.toLowerCase();
+
+    // 根据扩展名检测
+    if (ext === 'html' || ext === 'htm') return 'html';
+    if (ext === 'md' || ext === 'markdown') return 'markdown';
+    if (ext === 'svg') return 'svg';
+    if (ext === 'mermaid' || ext === 'mmd') return 'mermaid';
+
+    // 根据内容检测
+    if (content.trim().startsWith('<!DOCTYPE html') || content.trim().startsWith('<html')) return 'html';
+    if (content.trim().startsWith('<svg')) return 'svg';
+    if (content.includes('```mermaid') || content.match(/^(graph|flowchart|sequenceDiagram|classDiagram)/m)) return 'mermaid';
+    if (content.match(/^#+ /m)) return 'markdown';
+
+    return 'auto';
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
+    // 检查文件大小 (文本文件限制 1MB)
+    const TEXT_FILE_MAX = 1 * 1024 * 1024;
+    if (file.size > TEXT_FILE_MAX) {
       toast.error(t("fileSizeError"));
       return;
     }
 
     setUploading(true);
-    const loadingId = toast.loading(t("uploading"));
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      // 读取文件内容为文本
+      const text = await file.text();
 
-      const res = await fetch(`${window.location.origin}/api/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      // 检测文件类型
+      const detectedType = detectFileType(file.name, text);
 
-      const data = await res.json();
-      toast.dismiss(loadingId);
+      // 设置编辑器内容和类型
+      setContent(text);
+      setContentType(detectedType);
 
-      if (data.error) {
-        toast.error(data.error);
-        setUploading(false);
-        return;
-      }
-
-      // 保存到历史
-      ShareStorage.save({
-        title: file.name,
-        content: data.url,
-        type: "file",
-        fileName: file.name,
-        fileSize: file.size,
-      });
-
-      // 设置上传结果
-      setUploadedFile({
-        url: data.url,
-        name: file.name,
-        size: file.size,
-      });
-
-      toast.success(t("uploadSuccess"));
+      toast.success(t("fileLoaded"));
       setUploading(false);
     } catch (error) {
-      toast.dismiss(loadingId);
-      toast.error(t("uploadFailed"));
+      toast.error(t("fileReadError"));
       setUploading(false);
     }
 
@@ -152,41 +144,17 @@ export default function TextShare() {
         />
       </div>
 
-      {/* Upload Result Section */}
-      {uploadedFile && (
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-700/50 p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <Check className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">
-                  {t("uploadSuccess")}
-                </h3>
-                <p className="text-sm text-green-700 dark:text-green-300">
-                  {uploadedFile.name} ({(uploadedFile.size / 1024).toFixed(1)} KB)
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => setUploadedFile(null)}
-              className="p-1 rounded-full hover:bg-green-200 dark:hover:bg-green-700/50 transition-colors"
-            >
-              <X className="w-5 h-5 text-green-700 dark:text-green-300" />
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <Input
-              value={uploadedFile.url}
-              readOnly
-              className="bg-white/80 dark:bg-gray-800/80 flex-1"
-            />
-            <CopyButton text={uploadedFile.url} />
-          </div>
-          <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-            {t("fileExpirationNotice")}
-          </p>
+      {/* Type Badge - shown when type is detected */}
+      {contentType !== "auto" && content && (
+        <div className="flex justify-end">
+          <span className={`inline-flex items-center px-3 py-1 rounded-md text-sm font-medium ${contentType === 'html' ? 'bg-primary/20 text-primary' :
+              contentType === 'markdown' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                contentType === 'svg' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
+                  contentType === 'mermaid' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' :
+                    'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+            }`}>
+            &lt;/&gt; {contentType.toUpperCase()}
+          </span>
         </div>
       )}
 

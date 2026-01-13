@@ -95,7 +95,9 @@ export default {
   uploadSuccess: "上传成功",
   uploadFailed: "上传失败",
   linkCopied: "链接已复制",
-  fileSizeError: "文件过大，最大25MB",
+  fileSizeError: "文件过大，最大1MB",
   passwordGenerated: "将自动生成密码",
   noPassword: "无密码",
+  fileLoaded: "文件已加载到编辑器",
+  fileReadError: "无法读取文件",
 };
