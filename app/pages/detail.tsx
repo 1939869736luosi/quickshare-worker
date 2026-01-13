@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Code, Eye } from "lucide-react";
+import { Code, Eye, Globe, Lock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -92,9 +92,9 @@ export default function Detail() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 max-w-md w-full mx-4">
           <div className="text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-gray-700 rounded-full mb-6">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 dark:bg-gray-700 rounded-full mb-6">
               <svg
-                className="w-8 h-8 text-blue-600 dark:text-blue-400"
+                className="w-8 h-8 text-primary dark:text-blue-400"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -138,9 +138,9 @@ export default function Detail() {
           <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-primary/10 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                   <svg
-                    className="w-4 h-4 text-blue-600 dark:text-blue-400"
+                    className="w-4 h-4 text-primary dark:text-blue-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -168,8 +168,18 @@ export default function Detail() {
                       {contentType}
                     </span>
                     <span>•</span>
-                    <span>
-                      {pasteData?.is_protected ? `🔒 ${t("protected")}` : `🌐 ${t("public")}`}
+                    <span className="flex items-center">
+                      {pasteData?.is_protected ? (
+                        <>
+                          <Lock className="w-3 h-3 mr-1" />
+                          {t("protected")}
+                        </>
+                      ) : (
+                        <>
+                          <Globe className="w-3 h-3 mr-1" />
+                          {t("public")}
+                        </>
+                      )}
                     </span>
                   </div>
                 </div>
@@ -223,7 +233,7 @@ export default function Detail() {
                   <Button
                     size="sm"
                     onClick={handleUpdatePaste}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     {t("update")}
                   </Button>
@@ -242,7 +252,7 @@ export default function Detail() {
               <button
                 onClick={() => setViewMode("preview")}
                 className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "preview"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-primary-foreground"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
               >
@@ -252,7 +262,7 @@ export default function Detail() {
               <button
                 onClick={() => setViewMode("source")}
                 className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "source"
-                  ? "bg-blue-600 text-white"
+                  ? "bg-primary text-primary-foreground"
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
               >
