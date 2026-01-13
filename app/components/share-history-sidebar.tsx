@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Code, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -18,6 +19,71 @@ interface ShareHistorySidebarProps {
   onClose: () => void;
 }
 
+// 根据内容类型获取颜色样式 (符合 Warm Academic Humanism)
+const getTypeColor = (language?: string): string => {
+  const lang = language?.toLowerCase() || "text";
+  switch (lang) {
+    case "html":
+      return "bg-[#D67052]/20 text-[#D67052] dark:bg-[#D67052]/30 dark:text-[#E8947A]"; // Terracotta
+    case "markdown":
+    case "md":
+      return "bg-[#F0B857]/20 text-[#B8860B] dark:bg-[#F0B857]/30 dark:text-[#F0B857]"; // Mustard
+    case "svg":
+      return "bg-[#1E3A5F]/20 text-[#1E3A5F] dark:bg-[#1E3A5F]/40 dark:text-[#6B8CAE]"; // Navy
+    case "mermaid":
+      return "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300";
+    case "javascript":
+    case "js":
+    case "typescript":
+    case "ts":
+    case "python":
+    case "go":
+    case "json":
+      return "bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300";
+    default:
+      return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
+  }
+};
+
+// 智能提取标题
+const extractSmartTitle = (content: string, language?: string): string => {
+  const lang = language?.toLowerCase() || "text";
+
+  // 对于 HTML，提取 <title> 标签
+  if (lang === "html" || lang === "auto") {
+    const titleMatch = content.match(/<title[^>]*>([^<]+)<\/title>/i);
+    if (titleMatch && titleMatch[1].trim()) {
+      return titleMatch[1].trim().slice(0, 60);
+    }
+  }
+
+  // 对于 Markdown，提取第一个 # 标题
+  if (lang === "markdown" || lang === "md") {
+    const headingMatch = content.match(/^#+\s+(.+)$/m);
+    if (headingMatch && headingMatch[1].trim()) {
+      return headingMatch[1].trim().slice(0, 60);
+    }
+  }
+
+  // 对于 Mermaid，提取图表标题
+  if (lang === "mermaid") {
+    const lines = content.split("\n").filter((l) => l.trim());
+    if (lines.length > 0) {
+      return `Mermaid: ${lines[0].slice(0, 30)}...`;
+    }
+  }
+
+  // 默认：使用第一行非空内容
+  const firstLine = content.split("\n").find((line) => line.trim());
+  if (firstLine) {
+    // 去除 HTML 标签和特殊字符
+    const cleanLine = firstLine.replace(/<[^>]+>/g, "").trim();
+    return cleanLine.slice(0, 60) || language?.toUpperCase() || "Untitled";
+  }
+
+  return language?.toUpperCase() || "Untitled";
+};
+
 export default function ShareHistorySidebar({
   open,
   onClose,
@@ -27,6 +93,7 @@ export default function ShareHistorySidebar({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedShare, setSelectedShare] = useState<ShareItem | null>(null);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"preview" | "source">("preview");
 
   useEffect(() => {
     if (open) {
@@ -57,6 +124,7 @@ export default function ShareHistorySidebar({
 
   const handleView = (share: ShareItem) => {
     setSelectedShare(share);
+    setViewMode("preview"); // 默认打开预览模式
     setIsViewDialogOpen(true);
   };
 
@@ -92,6 +160,12 @@ export default function ShareHistorySidebar({
     }
   };
 
+  // 判断是否可以预览
+  const canPreview = (language?: string): boolean => {
+    const lang = language?.toLowerCase() || "";
+    return ["html", "svg", "auto"].includes(lang);
+  };
+
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
@@ -99,7 +173,7 @@ export default function ShareHistorySidebar({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <svg
-                className="w-5 h-5 text-blue-600 dark:text-blue-400"
+                className="w-5 h-5 text-primary dark:text-[#E8947A]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -175,22 +249,18 @@ export default function ShareHistorySidebar({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span
-                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              share.type === "text"
-                                ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${share.type === "text"
+                                ? getTypeColor(share.language)
                                 : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                            }`}
+                              }`}
                           >
-                            {share.type === "text" ? t("text") : t("file")}
+                            {share.type === "text"
+                              ? share.language?.toUpperCase() || t("text")
+                              : t("file")}
                           </span>
-                          {share.language && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-600 dark:text-gray-300">
-                              {share.language}
-                            </span>
-                          )}
                         </div>
                         <h3 className="font-medium text-gray-900 dark:text-white truncate">
-                          {share.title}
+                          {extractSmartTitle(share.content, share.language)}
                         </h3>
                         <div className="flex items-center gap-4 mt-1 text-sm text-gray-600 dark:text-gray-400">
                           <span>{formatDate(share.createdAt)}</span>
@@ -235,18 +305,22 @@ export default function ShareHistorySidebar({
       </Dialog>
 
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              {selectedShare?.title}
+              {extractSmartTitle(
+                selectedShare?.content || "",
+                selectedShare?.language,
+              )}
               <span
-                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                  selectedShare?.type === "text"
-                    ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${selectedShare?.type === "text"
+                    ? getTypeColor(selectedShare?.language)
                     : "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                }`}
+                  }`}
               >
-                {selectedShare?.type === "text" ? t("text") : t("file")}
+                {selectedShare?.type === "text"
+                  ? selectedShare?.language?.toUpperCase() || t("text")
+                  : t("file")}
               </span>
             </DialogTitle>
             <DialogDescription>
@@ -259,25 +333,71 @@ export default function ShareHistorySidebar({
               )}
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 max-h-96 overflow-auto">
-              <pre className="whitespace-pre-wrap text-sm font-mono">
-                {selectedShare?.content}
-              </pre>
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                variant="outline"
-                onClick={() =>
-                  selectedShare && handleCopy(selectedShare.content)
-                }
+
+          {/* 预览/源码切换标签 */}
+          <div className="flex items-center justify-end mb-2">
+            <div className="flex bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 overflow-hidden">
+              <button
+                onClick={() => setViewMode("preview")}
+                className={`px-3 py-1.5 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "preview"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  }`}
               >
-                {t("copyContent")}
-              </Button>
-              <Button onClick={() => setIsViewDialogOpen(false)}>
-                {t("close")}
-              </Button>
+                <Eye className="h-3 w-3" />
+                {t("preview")}
+              </button>
+              <button
+                onClick={() => setViewMode("source")}
+                className={`px-3 py-1.5 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "source"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+                  }`}
+              >
+                <Code className="h-3 w-3" />
+                {t("source")}
+              </button>
             </div>
+          </div>
+
+          {/* 内容区域 */}
+          <div className="flex-1 overflow-hidden">
+            {viewMode === "preview" ? (
+              canPreview(selectedShare?.language) ? (
+                <iframe
+                  title="preview"
+                  srcDoc={selectedShare?.content || ""}
+                  sandbox="allow-scripts"
+                  className="w-full h-96 bg-white rounded-lg border border-gray-200 dark:border-gray-600"
+                />
+              ) : (
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-96 overflow-auto">
+                  <pre className="whitespace-pre-wrap text-sm font-mono">
+                    {selectedShare?.content}
+                  </pre>
+                </div>
+              )
+            ) : (
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-96 overflow-auto">
+                <pre className="whitespace-pre-wrap text-sm font-mono">
+                  {selectedShare?.content}
+                </pre>
+              </div>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() =>
+                selectedShare && handleCopy(selectedShare.content)
+              }
+            >
+              {t("copyContent")}
+            </Button>
+            <Button onClick={() => setIsViewDialogOpen(false)}>
+              {t("close")}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
