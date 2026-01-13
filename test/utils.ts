@@ -5,7 +5,7 @@ import * as schema from '../server/database/schema';
 export function createTestDB() {
   const sqlite = new Database(':memory:');
   const db = drizzle(sqlite, { schema });
-  
+
   const migrationScript = `
     CREATE TABLE \`files\` (
       \`id\` text PRIMARY KEY NOT NULL,
@@ -19,6 +19,9 @@ export function createTestDB() {
     CREATE TABLE \`pastes\` (
       \`id\` text PRIMARY KEY NOT NULL,
       \`content\` text NOT NULL,
+      \`content_type\` text DEFAULT 'html' NOT NULL,
+      \`is_protected\` integer DEFAULT 0 NOT NULL,
+      \`share_password\` text DEFAULT '',
       \`edit_password\` text DEFAULT '',
       \`expire\` integer DEFAULT 0 NOT NULL,
       \`language\` text DEFAULT 'text' NOT NULL,
@@ -26,8 +29,8 @@ export function createTestDB() {
       \`metadata\` text NOT NULL
     );
   `;
-  
+
   sqlite.exec(migrationScript.replace(/--> statement-breakpoint/g, ''));
-  
+
   return db;
 }
