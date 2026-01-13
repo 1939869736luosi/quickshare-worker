@@ -38,6 +38,7 @@ i18n
   .use(LanguageDetector)
   .init({
     resources,
+    lng: "zh", // Force Chinese by default
     fallbackLng: "zh",
 
     interpolation: {
