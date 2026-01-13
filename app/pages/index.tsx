@@ -1,13 +1,10 @@
-import { FileUp, Type } from "lucide-react";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
-import ImageShare from "../components/file-share";
 import TextShare from "../components/text-share";
 
 export default memo(function CreatePaste() {
   const { t } = useTranslation();
-  const [mode, setMode] = useState<"text" | "file">("text");
 
   return (
     <div className="bg-background paper-texture min-h-[calc(100vh-4rem)]">
@@ -24,32 +21,8 @@ export default memo(function CreatePaste() {
 
         {/* Main Content */}
         <div className="bg-card rounded-lg shadow-sm border border-border/50 overflow-hidden">
-          {/* Mode Switcher Tabs */}
-          <div className="flex border-b border-border/50">
-            <button
-              onClick={() => setMode("text")}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 font-medium transition-colors ${mode === "text"
-                  ? "bg-primary/10 text-primary border-b-2 border-primary"
-                  : "text-muted-foreground hover:bg-muted/50"
-                }`}
-            >
-              <Type className="w-4 h-4" />
-              {t("text")}
-            </button>
-            <button
-              onClick={() => setMode("file")}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 font-medium transition-colors ${mode === "file"
-                  ? "bg-primary/10 text-primary border-b-2 border-primary"
-                  : "text-muted-foreground hover:bg-muted/50"
-                }`}
-            >
-              <FileUp className="w-4 h-4" />
-              {t("file")}
-            </button>
-          </div>
-
           <div className="p-6">
-            {mode === "text" ? <TextShare /> : <ImageShare />}
+            <TextShare />
           </div>
         </div>
 

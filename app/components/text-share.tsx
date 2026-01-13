@@ -8,8 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FileUp } from "lucide-react";
 import qs from "qs";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
@@ -17,6 +18,8 @@ import { useLocation } from "wouter";
 import { createPaste } from "../service";
 import { ShareStorage } from "../utils/share-storage";
 import Editor from "./editor";
+
+const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
 
 export default function TextShare() {
   const { t } = useTranslation();
@@ -26,6 +29,8 @@ export default function TextShare() {
   const [expiration, setExpiration] = useState<number | undefined>(undefined);
   const [isProtected, setIsProtected] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const createPB = async () => {
     if (!content) return toast.error(t("pleaseEnterContent"));
@@ -71,6 +76,64 @@ export default function TextShare() {
     setIsProtected(checked);
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(t("fileSizeError"));
+      return;
+    }
+
+    setUploading(true);
+    const loadingId = toast.loading(t("uploading"));
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(`${window.location.origin}/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      toast.dismiss(loadingId);
+
+      if (data.error) {
+        toast.error(data.error);
+        setUploading(false);
+        return;
+      }
+
+      // 保存到历史
+      ShareStorage.save({
+        title: file.name,
+        content: data.url,
+        type: "file",
+        fileName: file.name,
+        fileSize: file.size,
+      });
+
+      toast.success(t("uploadSuccess"));
+
+      // 复制链接到剪贴板
+      navigator.clipboard.writeText(data.url);
+      toast.success(t("linkCopied"));
+
+      setUploading(false);
+    } catch (error) {
+      toast.dismiss(loadingId);
+      toast.error(t("uploadFailed"));
+      setUploading(false);
+    }
+
+    // 重置 input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Editor Section */}
@@ -87,7 +150,31 @@ export default function TextShare() {
 
       {/* Settings Section */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* 上传文件按钮 */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground h-5 flex items-center">
+              {t("uploadFile")}
+            </label>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              className="hidden"
+              accept="*"
+            />
+            <Button
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="w-full bg-white/80 dark:bg-gray-900/80 border-dashed border-2 hover:border-primary hover:bg-primary/5"
+            >
+              <FileUp className="w-4 h-4 mr-2" />
+              {uploading ? t("uploading") : t("selectFile")}
+            </Button>
+          </div>
+
+          {/* 是否私有 */}
           <div className="space-y-2">
             <div className="flex items-center space-x-2 h-5">
               <Checkbox
@@ -99,13 +186,14 @@ export default function TextShare() {
               </label>
             </div>
             <Input
-              value={isProtected ? "Password will be generated" : ""}
-              placeholder="No password"
+              value={isProtected ? t("passwordGenerated") : ""}
+              placeholder={t("noPassword")}
               disabled={true}
               className="bg-white/80 dark:bg-gray-900/80"
             />
           </div>
 
+          {/* 过期时间 */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground h-5 flex items-center">
               {t("expiration")}
@@ -128,6 +216,7 @@ export default function TextShare() {
             </Select>
           </div>
 
+          {/* 类型 */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground h-5 flex items-center">
               {t("type")}

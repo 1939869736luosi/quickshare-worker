@@ -13,9 +13,9 @@ export default {
   createPaste: "创建分享",
   uploadError: "上传失败: ",
   uploading: "上传中...",
-  fileSizeError: "文件大小不能超过 25MB",
+
   tutorial: "使用教程",
-  uploadSuccess: "上传成功",
+
   uploadSuccessTip: "您的文件已成功上传，点击下方按钮复制链接",
   copyLink: "复制链接",
   copySuccess: "复制成功",
@@ -62,7 +62,7 @@ export default {
   secureAndPrivateDesc: "可选的密码保护和自动过期功能",
   syntaxHighlighting: "语法高亮",
   syntaxHighlightingDesc: "支持10多种编程语言的优美语法高亮",
-  writePlaceHolder: "在这里输入您的文本...",
+  writePlaceHolder: "在这里粘贴你的 HTML/Markdown/SVG/Mermaid 代码...",
   min: "分钟",
   mins: "分钟",
   hour: "小时",
@@ -90,4 +90,12 @@ export default {
   public: "公开",
   createNew: "创建新分享",
   type: "类型",
+  uploadFile: "上传文件",
+  selectFile: "选择文件",
+  uploadSuccess: "上传成功",
+  uploadFailed: "上传失败",
+  linkCopied: "链接已复制",
+  fileSizeError: "文件过大，最大25MB",
+  passwordGenerated: "将自动生成密码",
+  noPassword: "无密码",
 };
