@@ -29,9 +29,9 @@ export default memo(function CreatePaste() {
         {/* Features Section */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="text-center p-6 bg-card rounded-lg shadow-sm border border-border/50">
-            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 bg-[#D67052] rounded-lg flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-6 h-6 text-primary"
+                className="w-6 h-6 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -53,9 +53,9 @@ export default memo(function CreatePaste() {
           </div>
 
           <div className="text-center p-6 bg-card rounded-lg shadow-sm border border-border/50">
-            <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 bg-[#F0B857] rounded-lg flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-6 h-6 text-secondary"
+                className="w-6 h-6 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -77,9 +77,9 @@ export default memo(function CreatePaste() {
           </div>
 
           <div className="text-center p-6 bg-card rounded-lg shadow-sm border border-border/50">
-            <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+            <div className="w-12 h-12 bg-[#1E3A5F] rounded-lg flex items-center justify-center mx-auto mb-4">
               <svg
-                className="w-6 h-6 text-accent"
+                className="w-6 h-6 text-white"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
