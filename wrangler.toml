@@ -3,7 +3,7 @@ account_id = "cca975e0235380701243fcb6f5e66e97"
 
 [vars]
 ENVIRONMENT = "production"
-BASE_URL = "https://your-subdomain.workers.dev"
+BASE_URL = "https://quickshare-worker.k62kkni9h2bmvgclhtkjp.workers.dev"
 
 
 # Optional: configure a custom domain in Cloudflare.

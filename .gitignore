@@ -7,3 +7,4 @@ dist
 .claude
 .output
 .env*
+.dev.vars

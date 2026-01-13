@@ -154,7 +154,7 @@ export default function TextShare() {
           <Button
             onClick={createPB}
             disabled={publishing || !content}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-colors"
           >
             {publishing ? "Creating..." : "Create Paste"}
           </Button>

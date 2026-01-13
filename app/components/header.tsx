@@ -30,18 +30,18 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <header className="bg-card border-b border-border/50 shadow-sm">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-        <Link to="/" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2 group">
           <img src={logoIcon} className="h-8 w-8" alt="PasteShare" />
-          <span className="text-xl font-semibold text-gray-900 dark:text-white">
+          <span className="text-xl font-serif font-semibold text-foreground group-hover:text-primary transition-colors">
             PasteShare
           </span>
         </Link>
         <nav className="flex items-center space-x-2">
           <button
             onClick={() => setIsHistoryOpen(true)}
-            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            className="p-2 text-muted-foreground hover:text-primary transition-colors"
             aria-label="分享历史"
             title="分享历史"
           >
@@ -64,7 +64,7 @@ export default function Header() {
             href="https://github.com/1939869736luosi/quickshare-worker"
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            className="p-2 text-muted-foreground hover:text-primary transition-colors"
             aria-label="View source code on GitHub"
           >
             <Github size={18} />
@@ -72,7 +72,7 @@ export default function Header() {
 
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <div className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+              <div className="p-2 text-muted-foreground hover:text-primary transition-colors">
                 {i18n.language === "en" ? (
                   <English size={18} />
                 ) : (
@@ -134,7 +134,7 @@ export default function Header() {
 
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <div className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+              <div className="p-2 text-muted-foreground hover:text-primary transition-colors">
                 {theme === "light" ? (
                   <Sun size={18} />
                 ) : theme === "dark" ? (
@@ -174,9 +174,9 @@ export default function Header() {
         </nav>
       </div>
 
-      <ShareHistorySidebar 
-        open={isHistoryOpen} 
-        onClose={() => setIsHistoryOpen(false)} 
+      <ShareHistorySidebar
+        open={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
       />
     </header>
   );
