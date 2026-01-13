@@ -118,29 +118,29 @@ export default function TextShare() {
                 <SelectValue placeholder={t("expiration")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="60">1 min</SelectItem>
-                <SelectItem value="300">5 mins</SelectItem>
-                <SelectItem value="3600">1 hour</SelectItem>
-                <SelectItem value="86400">1 day</SelectItem>
-                <SelectItem value="604800">1 week</SelectItem>
-                <SelectItem value="2592000">1 month</SelectItem>
+                <SelectItem value="60">1 {t("min")}</SelectItem>
+                <SelectItem value="300">5 {t("mins")}</SelectItem>
+                <SelectItem value="3600">1 {t("hour")}</SelectItem>
+                <SelectItem value="86400">1 {t("day")}</SelectItem>
+                <SelectItem value="604800">1 {t("week")}</SelectItem>
+                <SelectItem value="2592000">1 {t("month")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground h-5 flex items-center">
-              Type
+              {t("type")}
             </label>
             <Select
               value={contentType}
               onValueChange={(value) => setContentType(value)}
             >
               <SelectTrigger className="bg-white/80 dark:bg-gray-900/80">
-                <SelectValue placeholder="Type" />
+                <SelectValue placeholder={t("type")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="auto">Auto Detect</SelectItem>
+                <SelectItem value="auto">{t("autoDetect")}</SelectItem>
                 <SelectItem value="html">HTML</SelectItem>
                 <SelectItem value="markdown">Markdown</SelectItem>
                 <SelectItem value="svg">SVG</SelectItem>
@@ -156,7 +156,7 @@ export default function TextShare() {
             disabled={publishing || !content}
             className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-colors"
           >
-            {publishing ? "Creating..." : "Create Paste"}
+            {publishing ? t("uploading") : t("createPaste")}
           </Button>
         </div>
       </div>

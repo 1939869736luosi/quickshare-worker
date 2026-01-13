@@ -213,9 +213,8 @@ export default function SimpleEditor({
 
   return (
     <div
-      className={`rounded-md overflow-hidden bg-white dark:bg-gray-800 ${className} ${
-        isFullscreen ? "fixed inset-0 z-50 rounded-none" : ""
-      }`}
+      className={`rounded-md overflow-hidden bg-white dark:bg-gray-800 ${className} ${isFullscreen ? "fixed inset-0 z-50 rounded-none" : ""
+        }`}
       style={{ height: isFullscreen ? "100vh" : height }}
     >
       {/* 工具栏 */}
@@ -259,9 +258,8 @@ export default function SimpleEditor({
         </div>
       )}
       <div
-        className={`flex ${
-          showFullscreenButton ? "h-[calc(100%-49px)]" : "h-full"
-        }`}
+        className={`flex ${showFullscreenButton ? "h-[calc(100%-49px)]" : "h-full"
+          }`}
       >
         {/* 行号区域 */}
         <div
@@ -304,9 +302,8 @@ export default function SimpleEditor({
             }}
           >
             <pre
-              className={`font-mono text-sm whitespace-pre ${
-                isDark ? "prism-dark" : "prism-light"
-              }`}
+              className={`font-mono text-sm whitespace-pre ${isDark ? "prism-dark" : "prism-light"
+                }`}
               style={{
                 margin: 0,
                 padding: 0,
@@ -327,7 +324,7 @@ export default function SimpleEditor({
             onScroll={handleScroll}
             onPaste={handlePaste}
             readOnly={readonly}
-            placeholder={readonly ? "" : "Write your text here..."}
+            placeholder={readonly ? "" : t("writePlaceHolder")}
             className="w-full h-full resize-none border-0 outline-0 bg-transparent font-mono text-sm p-3 focus:ring-0 relative z-10"
             style={{
               lineHeight: "1.5rem",

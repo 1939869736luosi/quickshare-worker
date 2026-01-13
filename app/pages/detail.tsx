@@ -4,7 +4,7 @@ import { Code, Eye } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { useParams } from "wouter";
+import { useLocation, useParams } from "wouter";
 
 import CopyButton from "../components/copy-button";
 import Editor from "../components/editor";
@@ -21,6 +21,7 @@ export default function Detail() {
   const [viewMode, setViewMode] = useState<"preview" | "source">("preview");
 
   const { id } = useParams();
+  const [, navigate] = useLocation();
   const search = window.location.search;
   const params = new URLSearchParams(search);
   const urlPassword = params.get("password") || params.get("share_password");
@@ -107,22 +108,21 @@ export default function Detail() {
               </svg>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              Password Required
+              {t("passwordRequired")}
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              This content is password protected. Please enter the password to
-              view.
+              {t("passwordProtectedMsg")}
             </p>
             <div className="space-y-4">
               <Input
                 type="password"
                 value={passwordInput}
                 onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="Enter password"
+                placeholder={t("enterPassword")}
                 className="w-full"
               />
               <Button onClick={handleSubmitPassword} className="w-full">
-                Submit
+                {t("submit")}
               </Button>
             </div>
           </div>
@@ -169,24 +169,32 @@ export default function Detail() {
                     </span>
                     <span>•</span>
                     <span>
-                      {pasteData?.is_protected ? "🔒 Protected" : "🌐 Public"}
+                      {pasteData?.is_protected ? `🔒 ${t("protected")}` : `🌐 ${t("public")}`}
                     </span>
                   </div>
                 </div>
               </div>
               <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/")}
+                  className="bg-primary/10 text-primary hover:bg-primary/20"
+                >
+                  {t("createNew")}
+                </Button>
                 <CopyButton
                   text={`${window.location.origin}/view/${id}`}
                   size="sm"
                   variant="outline"
                 >
-                  <span className="sm:hidden">URL</span>
-                  <span className="hidden sm:inline">Copy Preview URL</span>
+                  <span className="sm:hidden">{t("url")}</span>
+                  <span className="hidden sm:inline">{t("copyPreviewUrl")}</span>
                 </CopyButton>
                 {pasteData?.is_protected && urlPassword && (
                   <CopyButton text={urlPassword} size="sm" variant="outline">
-                    <span className="sm:hidden">PWD</span>
-                    <span className="hidden sm:inline">Copy Password</span>
+                    <span className="sm:hidden">{t("pwd")}</span>
+                    <span className="hidden sm:inline">{t("pwd")}</span>
                   </CopyButton>
                 )}
                 {editPassword && (
@@ -195,21 +203,21 @@ export default function Detail() {
                     size="sm"
                     variant="outline"
                   >
-                    <span className="sm:hidden">Admin</span>
-                    <span className="hidden sm:inline">Admin URL</span>
+                    <span className="sm:hidden">{t("admin")}</span>
+                    <span className="hidden sm:inline">{t("adminUrl")}</span>
                   </CopyButton>
                 )}
                 <CopyButton text={content} size="sm" variant="outline">
-                  <span className="sm:hidden">Copy</span>
-                  <span className="hidden sm:inline">Copy raw text</span>
+                  <span className="sm:hidden">{t("copy")}</span>
+                  <span className="hidden sm:inline">{t("copyRawText")}</span>
                 </CopyButton>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => window.open(rawUrl)}
                 >
-                  <span className="sm:hidden">Raw</span>
-                  <span className="hidden sm:inline">View raw text</span>
+                  <span className="sm:hidden">{t("raw")}</span>
+                  <span className="hidden sm:inline">{t("viewRawText")}</span>
                 </Button>
                 {editPassword && (
                   <Button
@@ -217,7 +225,7 @@ export default function Detail() {
                     onClick={handleUpdatePaste}
                     className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    Update
+                    {t("update")}
                   </Button>
                 )}
               </div>
@@ -228,30 +236,28 @@ export default function Detail() {
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-              Content
+              {t("content")}
             </span>
             <div className="flex bg-white dark:bg-gray-700 rounded-md border border-gray-200 dark:border-gray-600 overflow-hidden">
               <button
                 onClick={() => setViewMode("preview")}
-                className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${
-                  viewMode === "preview"
+                className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "preview"
                     ? "bg-blue-600 text-white"
                     : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                }`}
+                  }`}
               >
                 <Eye className="h-3 w-3" />
-                Preview
+                {t("preview")}
               </button>
               <button
                 onClick={() => setViewMode("source")}
-                className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${
-                  viewMode === "source"
+                className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${viewMode === "source"
                     ? "bg-blue-600 text-white"
                     : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-                }`}
+                  }`}
               >
                 <Code className="h-3 w-3" />
-                Source
+                {t("source")}
               </button>
             </div>
           </div>
