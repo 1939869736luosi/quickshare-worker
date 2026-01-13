@@ -1,6 +1,6 @@
 # Pastebin Worker
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/xiadd/pastebin-worker)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/1939869736luosi/quickshare-worker)
 
 **Language**: English | [中文](README.zh.md)
 

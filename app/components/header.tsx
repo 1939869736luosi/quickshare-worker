@@ -61,7 +61,7 @@ export default function Header() {
           </button>
 
           <a
-            href="https://github.com/xiadd/pastebin-worker"
+            href="https://github.com/1939869736luosi/quickshare-worker"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"

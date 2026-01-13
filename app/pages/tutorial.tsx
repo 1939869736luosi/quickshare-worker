@@ -287,7 +287,7 @@ export default function Tutorial() {
                     </p>
                     <div className="flex flex-wrap gap-3">
                       <a
-                        href="https://github.com/xiadd/pastebin-worker"
+                        href="https://github.com/1939869736luosi/quickshare-worker"
                         className="inline-flex items-center px-4 py-2 bg-gray-900 dark:bg-gray-700 text-white rounded-lg hover:bg-gray-800 dark:hover:bg-gray-600 transition-colors"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -302,7 +302,7 @@ export default function Tutorial() {
                         View on GitHub
                       </a>
                       <a
-                        href="https://github.com/xiadd/pastebin-worker/issues"
+                        href="https://github.com/1939869736luosi/quickshare-worker/issues"
                         className="inline-flex items-center px-4 py-2 bg-blue-600 dark:bg-gray-700 text-white rounded-lg hover:bg-blue-700 dark:hover:bg-gray-600 transition-colors"
                         target="_blank"
                         rel="noopener noreferrer"
