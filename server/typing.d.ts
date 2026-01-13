@@ -5,8 +5,8 @@ declare module 'nitro' {
   interface Env {
     // D1 Database binding
     DB: D1Database;
-    // R2 Bucket binding
-    BUCKET: R2Bucket;
+    // Optional R2 Bucket binding
+    BUCKET?: R2Bucket;
     // Environment variables
     BASE_URL: string;
     ENVIRONMENT: string;
@@ -18,7 +18,7 @@ declare module 'h3' {
     cloudflare: {
       env: {
         DB: D1Database;
-        BUCKET: R2Bucket;
+        BUCKET?: R2Bucket;
         BASE_URL: string;
         ENVIRONMENT: string;
       };

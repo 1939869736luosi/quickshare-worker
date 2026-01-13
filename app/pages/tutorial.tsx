@@ -67,7 +67,7 @@ export default function Tutorial() {
                 <ol className="space-y-3">
                   {[
                     "Paste your code or text in the editor",
-                    "Choose your programming language for syntax highlighting",
+                    "Choose content type (HTML, Markdown, SVG, Mermaid, or Auto)",
                     "Set expiration time (optional)",
                     "Add password protection (optional)",
                     'Click "Create Paste" to generate a shareable link',
@@ -122,9 +122,9 @@ export default function Tutorial() {
                       <code className="text-sm font-mono">{`curl 'https://as.al/api/create' \\
   --data-raw '{
     "content": "console.log('Hello World!');",
-    "language": "javascript",
+    "content_type": "html",
     "expire": 3600,
-    "isPrivate": false
+    "is_protected": false
   }' \\
   --header 'Content-Type: application/json'`}</code>
                     </pre>
@@ -158,9 +158,9 @@ export default function Tutorial() {
                         desc: "The text/code content to share",
                       },
                       {
-                        name: "language",
+                        name: "content_type",
                         required: false,
-                        desc: "Programming language for syntax highlighting",
+                        desc: "Content type: html | markdown | svg | mermaid | auto",
                       },
                       {
                         name: "expire",
@@ -168,14 +168,9 @@ export default function Tutorial() {
                         desc: "Expiration time in seconds",
                       },
                       {
-                        name: "isPrivate",
+                        name: "is_protected",
                         required: false,
-                        desc: "Whether to password protect the paste",
-                      },
-                      {
-                        name: "share_password",
-                        required: false,
-                        desc: "Custom password for private pastes",
+                        desc: "Whether to require a password to view",
                       },
                     ].map((param) => (
                       <div
@@ -224,40 +219,24 @@ export default function Tutorial() {
                   </svg>
                 </div>
                 <h2 className="text-3xl font-semibold text-gray-800 dark:text-white">
-                  Supported Languages
+                  Supported Types
                 </h2>
               </div>
               <div className="bg-white dark:bg-gray-750 rounded-xl border border-gray-200 dark:border-gray-600 p-6">
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  PasteShare supports syntax highlighting for a wide variety of
-                  programming languages and file formats:
+                  PasteShare focuses on rendering shareable content types:
                 </p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[
-                    "JavaScript",
-                    "TypeScript",
-                    "Python",
-                    "Go",
-                    "C/C++",
-                    "Java",
-                    "PHP",
-                    "Ruby",
-                    "Rust",
-                    "Shell",
-                    "JSON",
-                    "YAML",
-                    "Markdown",
-                    "CSS",
-                    "HTML",
-                    "SQL",
-                  ].map((lang) => (
+                  {["HTML", "Markdown", "SVG", "Mermaid", "Auto Detect"].map(
+                    (lang) => (
                     <div
                       key={lang}
                       className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg text-center transition-all duration-200 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-gray-700 dark:hover:text-gray-200 hover:scale-105"
                     >
                       <span className="text-sm font-medium">{lang}</span>
                     </div>
-                  ))}
+                  ),
+                  )}
                 </div>
               </div>
             </section>

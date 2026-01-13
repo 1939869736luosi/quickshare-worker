@@ -5,7 +5,7 @@ import { createDB, pastes } from '../../database';
 export default defineHandler(async (event) => {
   const id = getRouterParam(event, 'id');
   const query = getQuery(event);
-  const password = query.share_password as string;
+  const password = (query.password || query.share_password) as string | undefined;
 
   const cloudflare = event.context.cloudflare || event.req?.runtime?.cloudflare;
   const db = createDB(cloudflare.env.DB);
@@ -17,16 +17,15 @@ export default defineHandler(async (event) => {
   }
 
   const content = res.content;
-  const data: any = JSON.parse(res.metadata);
-  if (data.share_password) {
+  if (res.isProtected) {
     if (!password) {
       event.res.status = 403;
       return 'Private paste, please provide password';
     }
-  }
-  if (password !== data.share_password) {
-    event.res.status = 403;
-    return 'Wrong password';
+    if (password !== res.sharePassword) {
+      event.res.status = 403;
+      return 'Wrong password';
+    }
   }
 
   event.res.headers.set('Content-Type', 'text/plain; charset=utf-8');

@@ -16,9 +16,9 @@ export async function createPaste(body: any) {
 
 export async function getPaste(
   id: string,
-  share_password?: string | undefined | null,
+  password?: string | undefined | null,
 ) {
-  const query = qs.stringify({ id, share_password }, { skipNulls: true });
+  const query = qs.stringify({ id, password }, { skipNulls: true });
   const res = await fetch(`${API_URL}/api/get?${query}`);
   const data = await res.json();
   return data;

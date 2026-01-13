@@ -1,8 +1,6 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
 
-import FileShare from "../components/file-share";
 import TextShare from "../components/text-share";
 
 export default memo(function CreatePaste() {
@@ -24,28 +22,7 @@ export default memo(function CreatePaste() {
         {/* Main Content */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="p-6">
-            <Tabs defaultValue="text" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-100 dark:bg-gray-700">
-                <TabsTrigger
-                  value="text"
-                  className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-100"
-                >
-                  {t("textShare")}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="file"
-                  className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:shadow-sm data-[state=active]:text-gray-900 dark:data-[state=active]:text-gray-100"
-                >
-                  {t("fileShare")}
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="text" className="mt-0">
-                <TextShare />
-              </TabsContent>
-              <TabsContent value="file" className="mt-0">
-                <FileShare />
-              </TabsContent>
-            </Tabs>
+            <TextShare />
           </div>
         </div>
 

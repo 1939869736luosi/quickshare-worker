@@ -1,11 +1,12 @@
 import { defineHandler, getQuery } from 'nitro/h3';
 import { eq } from 'drizzle-orm';
 import { createDB, pastes } from '../database';
+import { detectContentType } from '../utils/content-type';
 
 export default defineHandler(async (event) => {
   const query = getQuery(event);
   const id = query.id as string;
-  const password = query.share_password as string;
+  const password = (query.password || query.share_password) as string | undefined;
 
   const cloudflare = event.context.cloudflare || event.req?.runtime?.cloudflare;
   const db = createDB(cloudflare.env.DB);
@@ -22,7 +23,7 @@ export default defineHandler(async (event) => {
 
   const content = result.content;
   const data: any = JSON.parse(result.metadata);
-  if (data.share_password) {
+  if (result.isProtected) {
     if (!password) {
       event.res.status = 403;
       return {
@@ -30,14 +31,23 @@ export default defineHandler(async (event) => {
         code: 403,
       };
     }
-    if (password !== data.share_password) {
+    if (password !== result.sharePassword) {
       event.res.status = 403;
       return { error: 'Wrong password', code: 403 };
     }
   }
+  const contentType = result.contentType || detectContentType(result.content);
   return {
     content: content,
-    url: `${cloudflare.env.BASE_URL}/detail/${id}`,
-    ...data,
+    url: `${cloudflare.env.BASE_URL}/view/${id}`,
+    content_type: contentType,
+    is_protected: Boolean(result.isProtected),
+    ...stripSensitiveMetadata(data),
   };
 });
+
+function stripSensitiveMetadata(metadata: Record<string, any>) {
+  if (!metadata) return {};
+  const { share_password, ...rest } = metadata;
+  return rest;
+}

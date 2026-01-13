@@ -40,6 +40,7 @@ interface EditorProps {
 const languageMap: Record<string, string> = {
   text: "plaintext",
   markdown: "markdown",
+  mermaid: "markdown",
   go: "go",
   javascript: "javascript",
   typescript: "typescript",
@@ -50,6 +51,7 @@ const languageMap: Record<string, string> = {
   shell: "bash",
   html: "markup",
   xml: "markup",
+  svg: "markup",
   yaml: "yaml",
   css: "css",
   less: "css",

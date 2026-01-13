@@ -9,24 +9,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import qs from "qs";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 
 import { createPaste } from "../service";
-import nanoid from "../utils/nanoid";
 import { ShareStorage } from "../utils/share-storage";
 import Editor from "./editor";
 
 export default function TextShare() {
   const { t } = useTranslation();
   const [, navigate] = useLocation();
-  const [language, setLanguage] = useState("text");
-  const [sharePassword, setSharePassword] = useState<string>("");
+  const [contentType, setContentType] = useState("auto");
   const [content, setContent] = useState("");
   const [expiration, setExpiration] = useState<number | undefined>(undefined);
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isProtected, setIsProtected] = useState(false);
   const [publishing, setPublishing] = useState(false);
 
   const createPB = async () => {
@@ -36,29 +34,31 @@ export default function TextShare() {
       const data = await createPaste({
         content,
         expire: expiration,
-        isPrivate,
-        language,
-        share_password: sharePassword,
+        is_protected: isProtected,
+        content_type: contentType,
       });
 
       // 保存到本地存储
       const title =
-        content.split("\n")[0].slice(0, 50) || `${language} ${t("share")}`;
+        content.split("\n")[0].slice(0, 50) || `${contentType} ${t("share")}`;
       ShareStorage.save({
         title,
         content,
         type: "text",
-        language,
+        language: contentType,
       });
 
       setPublishing(false);
+      if (isProtected && data?.password) {
+        toast.success(`Password: ${data.password}`);
+      }
       navigate(
         `/detail/${data.id}${qs.stringify(
-          sharePassword ? { share_password: sharePassword } : {},
+          isProtected && data?.password ? { password: data.password } : {},
           { addQueryPrefix: true },
         )}`,
         {
-          state: { edit_password: data.edit_password },
+          state: { edit_password: data.edit_password, password: data.password },
         },
       );
     } catch (error) {
@@ -67,13 +67,8 @@ export default function TextShare() {
     }
   };
 
-  const handleSetAsPrivate = (checked: boolean) => {
-    setIsPrivate(checked);
-    setSharePassword(checked ? nanoid(10) : "");
-  };
-
-  const handleChangeSharePassword = (e: ChangeEvent<HTMLInputElement>) => {
-    setSharePassword(e.target.value);
+  const handleSetAsProtected = (checked: boolean) => {
+    setIsProtected(checked);
   };
 
   return (
@@ -83,7 +78,7 @@ export default function TextShare() {
         <Editor
           className="rounded-lg border-0"
           height="400px"
-          language={language}
+          language={contentType === "auto" ? "html" : contentType}
           onChange={(value) => setContent(value || "")}
           value={content}
           showFullscreenButton={true}
@@ -96,18 +91,17 @@ export default function TextShare() {
           <div className="space-y-2">
             <div className="flex items-center space-x-2 h-5">
               <Checkbox
-                checked={isPrivate}
-                onCheckedChange={handleSetAsPrivate}
+                checked={isProtected}
+                onCheckedChange={handleSetAsProtected}
               />
               <label className="text-sm font-medium text-foreground">
                 {t("privateTip")}
               </label>
             </div>
             <Input
-              value={sharePassword}
-              placeholder="Share Password"
-              onChange={handleChangeSharePassword}
-              disabled={!isPrivate}
+              value={isProtected ? "Password will be generated" : ""}
+              placeholder="No password"
+              disabled={true}
               className="bg-white/80 dark:bg-gray-900/80"
             />
           </div>
@@ -136,29 +130,21 @@ export default function TextShare() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground h-5 flex items-center">
-              Language
+              Type
             </label>
             <Select
-              value={language}
-              onValueChange={(value) => setLanguage(value)}
+              value={contentType}
+              onValueChange={(value) => setContentType(value)}
             >
               <SelectTrigger className="bg-white/80 dark:bg-gray-900/80">
-                <SelectValue placeholder="Language" />
+                <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="text">Plaintext</SelectItem>
+                <SelectItem value="auto">Auto Detect</SelectItem>
                 <SelectItem value="html">HTML</SelectItem>
-                <SelectItem value="xml">XML</SelectItem>
                 <SelectItem value="markdown">Markdown</SelectItem>
-                <SelectItem value="json">JSON</SelectItem>
-                <SelectItem value="yaml">YAML</SelectItem>
-                <SelectItem value="c">C/CPP</SelectItem>
-                <SelectItem value="javascript">JavaScript</SelectItem>
-                <SelectItem value="typescript">TypeScript</SelectItem>
-                <SelectItem value="python">Python</SelectItem>
-                <SelectItem value="golang">Golang</SelectItem>
-                <SelectItem value="css">CSS</SelectItem>
-                <SelectItem value="shell">Shell</SelectItem>
+                <SelectItem value="svg">SVG</SelectItem>
+                <SelectItem value="mermaid">Mermaid</SelectItem>
               </SelectContent>
             </Select>
           </div>

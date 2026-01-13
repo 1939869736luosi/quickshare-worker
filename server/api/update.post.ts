@@ -1,11 +1,16 @@
 import { defineHandler, readBody } from 'nitro/h3';
 import { eq } from 'drizzle-orm';
 import { createDB, pastes } from '../database';
+import {
+  detectContentType,
+  normalizeContentType,
+} from '../utils/content-type';
 
 interface UpdatePasteBody {
   id: string;
   content: string;
   edit_password: string;
+  content_type?: string;
 }
 
 export default defineHandler(async (event) => {
@@ -15,7 +20,7 @@ export default defineHandler(async (event) => {
     return { error: 'Missing required fields: id, content, edit_password' };
   }
   
-  const { id, content, edit_password } = body;
+  const { id, content, edit_password, content_type } = body;
 
   if (!content) {
     return { error: 'Content is required' };
@@ -34,6 +39,13 @@ export default defineHandler(async (event) => {
     return { error: 'Wrong password', code: 403 };
   }
 
-  await db.update(pastes).set({ content }).where(eq(pastes.id, id));
+  const nextType =
+    normalizeContentType(content_type) ||
+    result.contentType ||
+    detectContentType(content);
+  await db
+    .update(pastes)
+    .set({ content, contentType: nextType, language: nextType })
+    .where(eq(pastes.id, id));
   return { url: `${cloudflare.env.BASE_URL}/detail/${id}`, ...result };
 });

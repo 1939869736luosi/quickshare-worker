@@ -3,6 +3,9 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 export const pastes = sqliteTable('pastes', {
   id: text('id').primaryKey(),
   content: text('content').notNull(),
+  contentType: text('content_type').default('html').notNull(),
+  isProtected: integer('is_protected').default(0).notNull(),
+  sharePassword: text('share_password').default(''),
   editPassword: text('edit_password').default(''),
   expire: integer('expire').default(0).notNull(),
   language: text('language').default('text').notNull(),
