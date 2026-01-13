@@ -32,7 +32,7 @@ describe('create.post', () => {
   it('should create a new paste', async () => {
     const mockBody = {
       content: 'test content',
-      language: 'javascript',
+      content_type: 'html',
     };
     (readBody as any).mockResolvedValue(mockBody);
 
@@ -52,13 +52,15 @@ describe('create.post', () => {
     expect(result).toHaveProperty('id');
     expect(result).toHaveProperty('url');
     expect(result.content).toBe('test content');
-    expect(result.language).toBe('javascript');
+    expect(result.content_type).toBe('html');
+    expect(result).toHaveProperty('is_protected');
+    expect(result).toHaveProperty('password');
 
     // Verify DB
     const entries = testDb.select().from(pastes).all();
     expect(entries).toHaveLength(1);
     expect(entries[0].content).toBe('test content');
-    expect(entries[0].language).toBe('javascript');
+    expect(entries[0].contentType).toBe('html');
   });
 
   it('should return error if content is missing', async () => {
